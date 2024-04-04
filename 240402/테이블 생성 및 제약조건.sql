@@ -130,8 +130,70 @@ DESCRIBE employees;
 -- CASCADE 적용 확인
 
 -- 직원 테이블 생성
-CREATE TABLE 
+CREATE TABLE employees(
+	employee_id INT PRIMARY KEY,
+	employee_name VARCHAR(255) NOT NULL,
+    department_id INT,
+    FOREIGN KEY (department_id) REFERENCES departments(department_id)
+    -- 직원테이블의 부서 ID는 부서 테이블의 부서 ID를 참조 (외래 키 설정)
+    ON DELETE CASCADE
+    -- 특정 부서가 삭제될 때 해당 부서직원 정보도 모두 삭제
+);
 
+SELECT * FROM employees;
+SELECT * FROM departments;
+-- ex) 3번부서 삭제시, 3번 부서를 참조하던 행은 모두 삭제
+
+-- 2. SET NULL
+DROP TABLE employees;
+DROP TABLE departments;
+
+-- 부서 테이블 생성
+CREATE TABLE departments(
+	department_id INT PRIMARY KEY,
+    department_name VARCHAR(255) NOT NULL
+);
+
+-- 직원 테이블 생성
+CREATE TABLE employees (
+	employee_id INT PRIMARY KEY,
+    employee_name VARCHAR(255) NOT NULL,
+    department_id INT,
+    FOREIGN KEY(department_id) REFERENCES departments(department_id)
+    -- 직원 테이블의 부서 ID는 부서 테이블의 부서 ID를 참조 (외래 키 설정)
+    ON DELETE SET NULL
+    -- 특정 부서가 삭제될 때 해당 부서 직원의 부서 ID가 "NULL"로 설정
+);
+
+DESCRIBE employees;
+-- SET NULL 적용 확인
+SELECT * FROM departments;
+SELECT * FROM employees;
+
+-- 3. NO ACTION
+-- 고객 테이블 생성
+CREATE TABLE customer(
+	customer_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_name VARCHAR(255) NOT NULL
+);
+
+-- 고객 테이블을 참조하는 주문 테이블 생성
+CREATE TABLE orders (
+	order_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT,
+    order_date DATE,
+    FOREIGN KEY(customer_id) REFERENCES customer(customer_id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+    -- 특정 고객 정보를 삭제하려고 하거나, 고객 ID를 변경하려고 할 때 작업을 거부하게 됨
+    -- 아예 삭제가 되지 않음 
+);
+
+DESCRIBE customer;
+DESCRIBE orders;
+
+SELECT * FROM customer;
+SELECT * FROM orders;
 
 
 
